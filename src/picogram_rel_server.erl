@@ -17,7 +17,7 @@ init(_Args) ->
 handle_cast(start, State = []) ->
   {ok, Daemon} = ssh:daemon(4005, [{system_dir, "priv/ssh/"},
                                    {user_dir, "priv/user/"},
-                                   {subsystems, [{"rel_sshd", {picogram_sshd, []}}]}]),
+                                   {subsystems, [ssh_sftpd:subsystem_spec([]), {"rel_sshd", {picogram_sshd, []}}]}]),
   {noreply, [], hibernate}.
 
 %% Public function definitions
