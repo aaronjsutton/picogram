@@ -1,0 +1,16 @@
+{application, picogram,
+ [{description, "A tiny deployment mananger for Phoenix projects."},
+  {vsn, "0.1.0"},
+  {registered, []},
+  {mod, {picogram_app, []}},
+  {applications,
+   [kernel,
+    stdlib,
+    ssh
+   ]},
+  {env,[]},
+  {modules, []},
+
+  {licenses, ["Apache 2.0"]},
+  {links, []}
+ ]}.
