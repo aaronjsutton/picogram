@@ -1,7 +1,7 @@
 picogram
 =====
 
-A tiny deployment manager for Mix projects in Erlang.
+A tiny continuous deployment manager for my Phoenix projects, written in Erlang.
 
 Build
 -----
