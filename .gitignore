@@ -17,5 +17,4 @@ _build.tmp
 *.iml
 rebar3.crashdump
 *~
-priv/user
-priv/ssh
+priv/*
