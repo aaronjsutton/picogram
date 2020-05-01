@@ -27,7 +27,7 @@ phx_stop(AppRoot) ->
   os:cmd(io_lib:format("~s/bin/~s stop", [AppRoot, filename:basename(AppRoot)])).
 
 phx_migrate(AppRoot, Env) ->
-  "0\n" = os:cmd(io_lib:format("~s ~s/bin/~s eval $MIGRATOR 2> /dev/null; echo $?", [cmd_preamble(Env), AppRoot, filename:basename(AppRoot)])), ok.
+  "0\n" = os:cmd(io_lib:format("~s ~s/bin/~s eval $MIGRATOR > /dev/null 2> /dev/null; echo $?", [cmd_preamble(Env), AppRoot, filename:basename(AppRoot)])), ok.
 
 phx_start(AppRoot, Env) -> 
   [] = os:cmd(io_lib:format("~s ~s/bin/~s daemon_iex", [cmd_preamble(Env), AppRoot, filename:basename(AppRoot)])), ok.
