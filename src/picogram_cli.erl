@@ -27,5 +27,5 @@ connect(Ctx) ->
   {ok, Conn} = ssh:connect(Host, Port, [{user_dir, UserDir}]),
   io:format("=== Getting rel_server status...", []),
   {ok, Result} = picogram_rel_client:command(Conn, 0, 1000),
-  io:format("\rGetting rel_server status... ~s~n", [Result]),
+  io:format("\r=== Getting rel_server status... ~s~n", [Result]),
   dict:store(conn, Conn, Ctx).
