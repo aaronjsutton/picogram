@@ -2,7 +2,7 @@
 -behaviour(gen_server).
 
 -export([start_link/0]).
--export([init/1, handle_cast/2]).
+-export([init/1, handle_call/3, handle_cast/2]).
 -export([start_sshd/0, handle_cmd/2]).
 
 -record(state, {active=false, daemon, port, rel_root}).
@@ -33,6 +33,9 @@ handle_cast(start, #state{active=false}) ->
 
   {noreply, #state{active=true, daemon=Daemon, port=Port, rel_root=RelRoot}, hibernate}.
 
+handle_call(root, _, State=#state{rel_root=RelRoot}) ->
+  {reply, RelRoot, State}.
+
 %% Public function definitions
 
 start_sshd() ->
@@ -42,6 +45,11 @@ start_sshd() ->
 handle_cmd(0, _Data) ->
   {0, "rel_server 0.1.0 status: operational"};
   
+handle_cmd(1, Data) ->
+  Root = gen_server:call(?MODULE, root),
+  ok = picogram_phx:deploy(Root, Data),
+  {0, io_lib:format("rel_server: installation of phoenix app successful at ~s.", [Data])};
+
 handle_cmd(_, _) ->
   {1, "command not implemented"}.
 

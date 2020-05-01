@@ -31,4 +31,3 @@ transfer(Conn, File) ->
   {ok, Channel} = ssh_sftp:start_channel(Conn),
   {ok, Data} = file:read_file(File),
   ok = ssh_sftp:write_file(Channel, filename:basename(File), []).
-

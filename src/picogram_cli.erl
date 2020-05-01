@@ -1,11 +1,11 @@
 %% A command line interface for picogram deployments.
 -module(picogram_cli).
 
--export([main/2]).
+-export([main/1, main/2]).
 
--export([print_version/1, get_mix_version/1, make_tar/1, clean_tar/1, transfer_release/1, connect/1]).
+-export([print_version/1, get_mix_version/1, make_tar/1, clean_tar/1, transfer_release/1, connect/1, install_sequence/1]).
 
-main(Args) -> main([print_version, get_mix_version, make_tar, connect, transfer_release], Args).
+main(Args) -> main([print_version, get_mix_version, make_tar, connect, transfer_release, clean_tar, install_sequence], Args).
 main(Steps, Args) ->
   lists:foldl(fun (Step, Ctx) ->
                 case Step of
@@ -65,3 +65,17 @@ clean_tar(Ctx) ->
   file:delete(Tar),
   Ctx.
 
+install_sequence(Ctx) ->
+  Strategy = dict:fetch(install_strategy, Ctx),
+  Vsn = dict:fetch(vsn, Ctx),
+  Conn = dict:fetch(conn, Ctx),
+  Tar = dict:fetch(tar_path, Ctx),
+  case Strategy of
+    "phoenix" -> 
+      io:format("=== Running remote strategy for Phoenix application ~s...~n", [Vsn]),
+      {ok, Response} = picogram_rel_client:command(Conn, 1, filename:basename(Tar), 4000),
+      io:format("=== ~s~n", [Response]);
+     Other ->
+      io:format("=== Unknown install strategy ~s", [Other]), Ctx
+  end,
+  Ctx.
