@@ -73,7 +73,7 @@ install_sequence(Ctx) ->
   case Strategy of
     "phoenix" -> 
       io:format("=== Running remote strategy for Phoenix application ~s...~n", [Vsn]),
-      {ok, Response} = picogram_rel_client:command(Conn, 1, filename:basename(Tar), 4000),
+      {ok, Response} = picogram_rel_client:command(Conn, 1, filename:basename(Tar), 9000),
       io:format("=== ~s~n", [Response]);
      Other ->
       io:format("=== Unknown install strategy ~s", [Other]), Ctx
