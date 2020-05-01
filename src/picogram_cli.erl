@@ -3,8 +3,9 @@
 
 -export([main/2]).
 
--export([print_version/1, get_mix_version/1, make_tar/1, connect/1]).
+-export([print_version/1, get_mix_version/1, make_tar/1, clean_tar/1, transfer_release/1, connect/1]).
 
+main(Args) -> main([print_version, get_mix_version, make_tar, connect, transfer_release], Args).
 main(Steps, Args) ->
   lists:foldl(fun (Step, Ctx) ->
                 case Step of
@@ -28,7 +29,7 @@ get_mix_version(Ctx) ->
 make_tar(Ctx) ->
   Root = dict:fetch(release_root, Ctx),
   Vsn = dict:fetch(vsn, Ctx),
-  io:format("=== Compressing release ~s...~n", [Root]),
+  io:format("=== Compressing release ~s, this make take a minute...~n", [Root]),
   {ok, Filenames} = file:list_dir(Root),
   TarList = lists:map(fun (F) -> {F, filename:absname_join(Root, F)} end,
                       Filenames),
@@ -48,5 +49,19 @@ connect(Ctx) ->
   io:format("\r=== Getting rel_server status... ~s~n", [Result]),
   dict:store(conn, Conn, Ctx).
 
-transfer_release(Ctx) -> Ctx.
+transfer_release(Ctx) ->
+  Conn = dict:fetch(conn, Ctx),
+  Tar = dict:fetch(tar_path, Ctx),
+  io:format("=== Transferring tar to rel_server, this make take a minute...~n"),
+  {ok, Channel} = ssh_sftp:start_channel(Conn),
+  {ok, Data} = file:read_file(Tar),
+  ssh_sftp:write_file(Channel, filename:basename(Tar), Data),
+  io:format("=== Transfer complete.~n"),
+  Ctx.
+
+clean_tar(Ctx) ->
+  Tar = dict:fetch(tar_path, Ctx),
+  io:format("=== Cleaning up local tar...~n"),
+  file:delete(Tar),
+  Ctx.
 
