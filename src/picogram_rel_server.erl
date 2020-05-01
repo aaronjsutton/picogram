@@ -3,7 +3,7 @@
 
 -export([start_link/0]).
 -export([init/1, handle_cast/2]).
--export([start_sshd/0]).
+-export([start_sshd/0, handle_cmd/2]).
 
 -record(state, {active=false, daemon, port, rel_root}).
 
@@ -23,10 +23,12 @@ handle_cast(start, #state{active=false}) ->
   logger:info("==> Spawing picogram sshd..."),
   {ok, Port} = application:get_env(?OTP_APP, port),
   {ok, RelRoot} = application:get_env(?OTP_APP, rel_root),
+  {ok, SystemDir} = application:get_env(?OTP_APP, system_dir),
+  {ok, UserDir} = application:get_env(?OTP_APP, user_dir),
 
   logger:info(io_lib:format("==> sshd successfully listening on port ~b, deploying releases to ~s", [Port, RelRoot])),
-  {ok, Daemon} = ssh:daemon(Port, [{system_dir, "priv/ssh/"},
-                                   {user_dir, "priv/user/"},
+  {ok, Daemon} = ssh:daemon(Port, [{system_dir, SystemDir},
+                                   {user_dir, UserDir},
                                    {subsystems, [ssh_sftpd:subsystem_spec([{root, RelRoot}]), {"rel_sshd", {picogram_sshd, []}}]}]),
 
   {noreply, #state{active=true, daemon=Daemon, port=Port, rel_root=RelRoot}, hibernate}.
@@ -35,5 +37,12 @@ handle_cast(start, #state{active=false}) ->
 
 start_sshd() ->
   gen_server:cast(?MODULE, start).
+
+% Report the status of the daemon.
+handle_cmd(0, _Data) ->
+  {0, "rel_server 0.1.0 status: operational"};
+  
+handle_cmd(_, _) ->
+  {1, "command not implemented"}.
 
 % Private function definitions
