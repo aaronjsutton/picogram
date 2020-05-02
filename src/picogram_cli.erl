@@ -5,7 +5,7 @@
 
 -export([print_version/1, get_mix_version/1, make_tar/1, clean_tar/1, transfer_release/1, connect/1, install_sequence/1]).
 
-main(Args) -> main([print_version, get_mix_version, make_tar, connect, transfer_release, clean_tar, install_sequence], Args).
+main(Args) -> main([print_version, get_mix_version, make_tar, connect, transfer_release, install_sequence], Args).
 main(Steps, Args) ->
   lists:foldl(fun (Step, Ctx) ->
                 case Step of
@@ -31,7 +31,8 @@ make_tar(Ctx) ->
   Vsn = dict:fetch(vsn, Ctx),
   io:format("=== Compressing release ~s, this make take a minute...~n", [Root]),
   {ok, Filenames} = file:list_dir(Root),
-  TarList = lists:map(fun (F) -> {F, filename:absname_join(Root, F)} end,
+
+  TarList = lists:map(fun (F) -> {F, filename:absname(filename:join(Root, F))} end,
                       Filenames),
   Tar = filename:join(Root, io_lib:format("~s.tar.gz", [Vsn])),
   erl_tar:create(Tar, TarList, [compress]),
