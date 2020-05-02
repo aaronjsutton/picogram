@@ -3,6 +3,8 @@ picogram
 
 A tiny continuous deployment manager for my Phoenix projects, written in Erlang.
 
+Not excatly workable yet, a port of a few escripts I wrote for another project.
+
 Usage
 -----
 
