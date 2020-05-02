@@ -1,0 +1,4 @@
+[
+  {picogram, [{port, ${PORT}}, {user_dir, "${USER_DIR}"}, {system_dir, "${SYSTEM_DIR}"}, {rel_root, "${REL_ROOT}"}]}
+].
+

@@ -1,9 +1,23 @@
 picogram
 =====
 
-A tiny deployment manager for Mix projects in Erlang.
+A tiny continuous deployment manager for my Phoenix projects, written in Erlang.
 
-Build
+Not excatly workable yet, a port of a few escripts I wrote for another project.
+
+Usage
 -----
 
-    $ rebar3 compile
+
+### Server
+
+Clone and build:
+
+    $ git clone https://github.com/aaronjsutton/picogram.git
+    $ rebar3 release
+
+### Client
+  
+    $ mix picogram myserver.com port ssh_user_dir release_dir
+
+
